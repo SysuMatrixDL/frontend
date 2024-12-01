@@ -11,4 +11,9 @@ export default defineConfig({
     },
   },
   plugins: [reactRouter(), tsconfigPaths()],
+  server: {
+    hmr: {
+      overlay: false
+    }
+  }
 });
