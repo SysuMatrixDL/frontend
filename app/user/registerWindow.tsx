@@ -9,7 +9,7 @@ const BACKEND_AFFIX =  import.meta.env.BACKEND_AFFIX;
 export default function RegisterWindow() {
   let navigate = useNavigate();
   const [error, setError] = useState('');
-  const [visible, { toggle }] = useDisclosure(false);
+  const [loading, { toggle: loadingToggle }] = useDisclosure(false);
 
   const handleSubmit = async (values: Record<string, any>) => {
     setError('');
@@ -59,7 +59,7 @@ export default function RegisterWindow() {
         }
       }
 
-      toggle();
+      loadingToggle();
       navigate('/login');
     } catch (err : any) {
       setError(err.message);
@@ -79,7 +79,7 @@ export default function RegisterWindow() {
 
   return (
     <div>
-      <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+      <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <TextInput
           size="xl"

@@ -9,7 +9,7 @@ const BACKEND_AFFIX =  import.meta.env.BACKEND_AFFIX;
 export default function LoginWindow() {
   let navigate = useNavigate();
   const [error, setError] = useState(null);
-  const [visible, { toggle }] = useDisclosure(false);
+  const [loading, { toggle: loadingToggle }] = useDisclosure(false);
 
   const handleSubmit = async (values: Record<string, any>) => {
     setError(null);
@@ -46,7 +46,7 @@ export default function LoginWindow() {
         }
       }
 
-      toggle();
+      loadingToggle();
       navigate('/console');
     } catch (err: any) {
       setError(err.message);
@@ -66,7 +66,7 @@ export default function LoginWindow() {
 
   return (
     <div>
-      <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+      <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <TextInput
           withAsterisk

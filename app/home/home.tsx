@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import type { Route } from "./+types/home";
 import logoDark from "/logo-dark.svg";
 import logoLight from "/logo-white.svg";
-import { Button, LoadingOverlay } from '@mantine/core';
+import { Button, LoadingOverlay, Modal } from '@mantine/core';
 import { useDisclosure } from "@mantine/hooks";
 
 const BACKEND_AFFIX = import.meta.env.BACKEND_AFFIX;
@@ -14,52 +14,65 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-function getCookie(name: string): string | null {
-  const match: RegExpMatchArray | null = document.cookie.match(new RegExp('(^| )' + name + '=([^;]*)(;|$)'));
-  return match ? decodeURIComponent(match[2]) : null;
-}
-
 export default function Home() {
-  const [visible, { toggle }] = useDisclosure(false);
-  const username = getCookie('username');
-  const user_token = getCookie('user_token');
+  const [loading, { toggle: loadingToggle }] = useDisclosure(false);
+  const [
+    token_login_failed_warning,
+    { open: token_login_failed_warning_open, close: token_login_failed_warning_close }
+  ] = useDisclosure(false);
   let navigate = useNavigate();
+  let token_login_failed_message = '';
 
-  const loginWithToken = async () => {
+  const tokenLogin = async () => {
     try {
-      if (!username || !user_token) {
-        throw new Error('Login failed');
-      }
-
-      const body = {
-        username: username,
-        user_token: user_token
-      };
-
-      const response = await fetch(BACKEND_AFFIX + '/login', {
+      const response = await fetch(BACKEND_AFFIX + '/token_login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': '*/*'
         },
-        body: JSON.stringify(body),
         credentials: 'include'
       });
       
       if (!response.ok) {
-        throw new Error('Login failed');
+        if (response.body) {
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder("utf-8");
+          let result = '';
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            result += decoder.decode(value, { stream: true });
+          }
+          throw new Error(JSON.parse(result).error);
+        } else {
+          throw new Error('Login failed');
+        }
       }
-      toggle();
+      loadingToggle();
       navigate('/console');
     } catch (err : any) {
-      toggle();
-      navigate('/login');
+      token_login_failed_message = err.message;
+      loadingToggle();
+      token_login_failed_warning_open();
     }
   };
 
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
-      <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+      <Modal
+        opened={token_login_failed_warning}
+        onClose={()=> {
+          token_login_failed_warning_close();
+          navigate('/login');
+        }}
+        withCloseButton={false}
+        zIndex={1000}
+        className="text-center"
+      >
+        <p>登录信息失效!请重新登录!</p>
+      </Modal>
+      <LoadingOverlay visible={loading} zIndex={500} overlayProps={{ radius: "sm", blur: 2 }} />
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
         <header className="flex flex-col items-center gap-9">
           <div className="w-[500px] max-w-[100vw] p-4">
@@ -76,7 +89,7 @@ export default function Home() {
           </div>
         </header>
         <div className="max-w-[300px] w-full space-y-6 px-4 flex flex-col items-center">
-          <Button fullWidth onClick={loginWithToken}>Login</Button>
+          <Button fullWidth onClick={tokenLogin}>Login</Button>
           <Button fullWidth onClick={() => {return navigate('/register')}}>Register</Button>
           <nav className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 space-y-4">
             <p className="leading-6 text-gray-700 dark:text-gray-200 text-center">

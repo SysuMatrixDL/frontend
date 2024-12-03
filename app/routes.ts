@@ -10,6 +10,9 @@ export default [
   index("home/home.tsx"),
   route("login", "user/login.tsx"),
   route("register", "user/register.tsx"),
-  route("console", "console/console.tsx"),
-  // route("market", "market/market.tsx")
+  layout("navi.tsx", [
+    route("console", "console/console.tsx"),
+    route("market", "market/market.tsx"),
+    route("community", "community/community.tsx")
+  ]),
 ] satisfies RouteConfig;
