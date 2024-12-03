@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/home";
-import logoDark from "public/logo-dark.svg";
-import logoLight from "public/logo-white.svg";
+import logoDark from "/logo-dark.svg";
+import logoLight from "/logo-white.svg";
 import { Button } from '@mantine/core';
-const BACKEND_AFFIX = process.env.BACKEND_AFFIX;
+
+const BACKEND_AFFIX = import.meta.env.BACKEND_AFFIX;
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -23,20 +24,26 @@ export default function Home() {
   let navigate = useNavigate();
 
   const loginWithToken = async () => {
-    const body = {
-      username: username,
-      user_token: user_token
-    };
     try {
+      if (!username || !user_token) {
+        throw new Error('Login failed');
+      }
+
+      const body = {
+        username: username,
+        user_token: user_token
+      };
+
       const response = await fetch(BACKEND_AFFIX + '/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': '*/*'
         },
         body: JSON.stringify(body),
+        credentials: 'include'
       });
       
-      // TODO backend
       if (!response.ok) {
         throw new Error('Login failed');
       }

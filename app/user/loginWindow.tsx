@@ -3,7 +3,7 @@ import { useForm } from '@mantine/form';
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 
-const BACKEND_AFFIX = process.env.BACKEND_AFFIX;
+const BACKEND_AFFIX =  import.meta.env.BACKEND_AFFIX;
 
 export default function LoginWindow() {
   let navigate = useNavigate();

@@ -1,16 +1,12 @@
-# Welcome to React Router!
+# frontend for Sysu Matrix DL
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-## Features
-
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+Route:
+- react-router
+Components:
+- matine
+- tabler
+Style:
+- [Tailwind CSS](https://tailwindcss.com/) 
 
 ## Getting Started
 
@@ -19,7 +15,22 @@ A modern, production-ready template for building full-stack React applications u
 Install the dependencies:
 
 ```bash
-npm install
+pnpm install
+# npm install
+```
+
+### Env
+
+defined in `vite.config.ts`:
+
+```typescript
+export default defineConfig({
+  // ......
+  define: {
+    'import.meta.env.BACKEND_AFFIX': JSON.stringify('http://127.0.0.1:8000'),
+    'import.meta.env.GRAFANA_URL': JSON.stringify('http://172.18.198.206:3000/public-dashboards/5192664c23254fd3ba56f3ae1701a1a0?orgId=1&refresh=5s')
+  },
+});
 ```
 
 ### Development
@@ -27,16 +38,18 @@ npm install
 Start the development server with HMR:
 
 ```bash
-npm run dev
+pnpm run dev
+# npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+然后打开 `http://localhost:5173`.
 
 ## Building for Production
 
 Create a production build:
 
 ```bash
+pnpm run build
 npm run build
 ```
 
@@ -79,7 +92,7 @@ The containerized application can be deployed to any platform that supports Dock
 
 If you're familiar with deploying Node applications, the built-in app server is production-ready.
 
-Make sure to deploy the output of `npm run build`
+Make sure to deploy the output of (`p`) `npm run build`
 
 ```
 ├── package.json
@@ -88,11 +101,3 @@ Make sure to deploy the output of `npm run build`
 │   ├── client/    # Static assets
 │   └── server/    # Server-side code
 ```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
