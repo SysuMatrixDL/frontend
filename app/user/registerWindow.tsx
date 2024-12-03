@@ -1,17 +1,18 @@
-import { Button, Group, TextInput } from '@mantine/core';
+import { Button, Group, LoadingOverlay, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 
 const BACKEND_AFFIX =  import.meta.env.BACKEND_AFFIX;
 
 export default function RegisterWindow() {
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   let navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [visible, { toggle }] = useDisclosure(false);
 
-  const handleSubmit = async (values: Record<string, any>) => {  
-    setLoading(true);
+  const handleSubmit = async (values: Record<string, any>) => {
+    setError('');
     
     if(values['password'] != values['password2']){
       // 我不喜欢输错了就清空,还要重输蛮烦的
@@ -20,7 +21,6 @@ export default function RegisterWindow() {
       //   password: '',
       //   password2: '',
       // });
-      setLoading(false);
       setError('Two passwords are not the same');
       return;
     }
@@ -41,18 +41,28 @@ export default function RegisterWindow() {
         body: JSON.stringify(body),
         credentials: 'include'
       });
-      console.log("debug")
 
       if (!response.ok) {
-        throw new Error('Register failed');
+        if (response.body) {
+          console.log(response.body)
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder("utf-8");
+          let result = '';
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            result += decoder.decode(value, { stream: true });
+          }
+          throw new Error(JSON.parse(result).error);
+        } else {
+          throw new Error('Login failed');
+        }
       }
 
+      toggle();
       navigate('/login');
-
     } catch (err : any) {
-      setError(err.error);
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
   };
 
@@ -68,7 +78,8 @@ export default function RegisterWindow() {
   });
 
   return (
-    <div className='row-start-2'>
+    <div>
+      <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <TextInput
           size="xl"

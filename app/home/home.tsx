@@ -2,7 +2,8 @@ import { useNavigate } from "react-router";
 import type { Route } from "./+types/home";
 import logoDark from "/logo-dark.svg";
 import logoLight from "/logo-white.svg";
-import { Button } from '@mantine/core';
+import { Button, LoadingOverlay } from '@mantine/core';
+import { useDisclosure } from "@mantine/hooks";
 
 const BACKEND_AFFIX = import.meta.env.BACKEND_AFFIX;
 
@@ -19,6 +20,7 @@ function getCookie(name: string): string | null {
 }
 
 export default function Home() {
+  const [visible, { toggle }] = useDisclosure(false);
   const username = getCookie('username');
   const user_token = getCookie('user_token');
   let navigate = useNavigate();
@@ -47,16 +49,17 @@ export default function Home() {
       if (!response.ok) {
         throw new Error('Login failed');
       }
-
+      toggle();
       navigate('/console');
-  
     } catch (err : any) {
+      toggle();
       navigate('/login');
     }
   };
 
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
+      <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
         <header className="flex flex-col items-center gap-9">
           <div className="w-[500px] max-w-[100vw] p-4">

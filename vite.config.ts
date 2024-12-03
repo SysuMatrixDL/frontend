@@ -12,12 +12,15 @@ export default defineConfig({
   },
   plugins: [reactRouter(), tsconfigPaths()],
   server: {
+    proxy: {
+      '/api': 'http://127.0.0.1:8000'
+    },
     hmr: {
       overlay: false
     }
   },
   define: {
-    'import.meta.env.BACKEND_AFFIX': JSON.stringify('http://127.0.0.1:8000'),
+    'import.meta.env.BACKEND_AFFIX': JSON.stringify('/api'),
     'import.meta.env.GRAFANA_URL': JSON.stringify('http://172.18.198.206:3000/public-dashboards/5192664c23254fd3ba56f3ae1701a1a0?orgId=1&refresh=5s')
   },
 });
