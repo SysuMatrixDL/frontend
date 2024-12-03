@@ -1,12 +1,12 @@
 import { Button, Group, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router";
 
 export default function LoginWindow() {
+  let navigate = useNavigate();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  let navigate = useNavigate();
 
   const handleSubmit = async (values: Record<string, any>) => {  
     setLoading(true);
@@ -26,7 +26,7 @@ export default function LoginWindow() {
       // }
       // const data = await response.json();
 
-      navigate('/');
+      navigate('/console');
     } catch (err) {
       console.log(error);
       // setError(err.message);
@@ -75,7 +75,8 @@ export default function LoginWindow() {
       /> */}
 
       <Group justify="flex-end" mt="md">
-        <Button type="submit">Login</Button>
+        <Button type="submit" fullWidth>Login</Button>
+        <Button fullWidth onClick={() => {return navigate('/register')}}>Not having an account? Click to register</Button>
       </Group>
     </form>
   );

@@ -69,7 +69,7 @@ export default function RegisterWindow() {
   });
 
   return (
-    <div className='top-10'>
+    <div className='row-start-2'>
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <TextInput
           size="xl"
@@ -104,7 +104,8 @@ export default function RegisterWindow() {
         /> */}
 
         <Group justify="flex-end" mt="md">
-          <Button type="submit">Register</Button>
+          <Button type="submit" fullWidth>Register</Button>
+          <Button fullWidth onClick={() => {return navigate('/login')}}>Already have an account? Click to login</Button>
         </Group>
       </form>
       {error && <div className='text-red-600 text-15 text-center mt-5'>{error}</div>}
