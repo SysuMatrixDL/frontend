@@ -3,7 +3,7 @@ import type { Route } from "./+types/home";
 import logoDark from "public/logo-dark.svg";
 import logoLight from "public/logo-white.svg";
 import { Button } from '@mantine/core';
-import { useState } from "react";
+const BACKEND_AFFIX = process.env.BACKEND_AFFIX;
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -18,7 +18,6 @@ function getCookie(name: string): string | null {
 }
 
 export default function Home() {
-  const [login, setLogin] = useState(false);
   const username = getCookie('username');
   const user_token = getCookie('user_token');
   let navigate = useNavigate();
@@ -29,7 +28,7 @@ export default function Home() {
       user_token: user_token
     };
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch(BACKEND_AFFIX + '/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,14 +37,15 @@ export default function Home() {
       });
       
       // TODO backend
-      // if (!response.ok) {
-      //   throw new Error('Login failed');
-      // }
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      navigate('/console');
   
     } catch (err : any) {
-      // navigate('/login');
+      navigate('/login');
     }
-    navigate('/console');
   };
 
   return (

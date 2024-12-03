@@ -3,6 +3,8 @@ import { useForm } from '@mantine/form';
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 
+const BACKEND_AFFIX = process.env.BACKEND_AFFIX;
+
 export default function RegisterWindow() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,35 +25,32 @@ export default function RegisterWindow() {
       return;
     }
 
+    var body = {
+      username : values['username'],
+      password : values['password'],
+      email: values['email']
+    }
+
     try {
-      const response = await fetch('/api/register', {
+      const response = await fetch(BACKEND_AFFIX + '/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': '*/*'
         },
-        body: JSON.stringify({ values }),
+        body: JSON.stringify(body),
+        credentials: 'include'
       });
+      console.log("debug")
 
-      // if (!response.ok) {
-      //   throw new Error('Register failed');
-      // }
-      // // backend should response header with SetCookie
-      // const cookies = JSON.parse(document.cookie);
-      // const username = cookies['username'];
-      // const user_token = cookies['user_token'];
-      // if(!username || !user_token){
-      //   throw new Error('Failed to store cookies');
-      // }
-      // // otherwise frontend set cookie here
-      const username = values['username'];
-      const user_token = values['password'];
-      const expires = new Date(Date.now() + 7 * 864e5).toUTCString(); // 7 天有效期
-      document.cookie = `username=${encodeURIComponent(username)}; expires=${expires}; path=/; SameSite=Lax`;
-      document.cookie = `user_token=${encodeURIComponent(user_token)}; expires=${expires}; path=/; SameSite=Lax`;
+      if (!response.ok) {
+        throw new Error('Register failed');
+      }
+
       navigate('/login');
 
     } catch (err : any) {
-      setError(err.message);
+      setError(err.error);
     } finally {
       setLoading(false);
     }
@@ -94,6 +93,14 @@ export default function RegisterWindow() {
           placeholder="your password"
           key={form.key('password2')}
           {...form.getInputProps('password2')}
+        />
+        <TextInput
+          size="xl"
+          withAsterisk
+          label="Email"
+          placeholder="your email"
+          key={form.key('email')}
+          {...form.getInputProps('email')}
         />
 
         {/* <Checkbox

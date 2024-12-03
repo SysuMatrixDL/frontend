@@ -1,7 +1,9 @@
 import { Button, Group, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from "react-router";
+
+const BACKEND_AFFIX = process.env.BACKEND_AFFIX;
 
 export default function LoginWindow() {
   let navigate = useNavigate();
@@ -12,24 +14,30 @@ export default function LoginWindow() {
     setLoading(true);
     setError(null);
 
+    var body = {
+      username : values['username'],
+      password : values['password']
+    }
+
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch(BACKEND_AFFIX + '/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': '*/*'
         },
-        body: JSON.stringify({ values }),
+        body: JSON.stringify(body),
+        credentials: 'include'
       });
 
-      // if (!response.ok) {
-      //   throw new Error('Login failed');
-      // }
-      // const data = await response.json();
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
 
       navigate('/console');
-    } catch (err) {
-      console.log(error);
-      // setError(err.message);
+
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
