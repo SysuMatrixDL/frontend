@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [reactRouter(), tsconfigPaths()],
   server: {
     proxy: {
-      '/api': process.env.BACKEND_SUFFIX || 'http://127.0.0.1:8000'
+      '/api': process.env['BACKEND_SUFFIX'] || 'http://127.0.0.1:8000'
     },
     hmr: {
       overlay: false
@@ -21,6 +21,6 @@ export default defineConfig({
   },
   define: {
     'import.meta.env.BACKEND_SUFFIX': JSON.stringify('/api'),
-    'import.meta.env.GRAFANA_URL': JSON.stringify(process.env.GRAFANA_URL || 'http://172.18.198.206:3000/public-dashboards/5192664c23254fd3ba56f3ae1701a1a0?orgId=1&refresh=5s')
+    'import.meta.env.GRAFANA_URL': JSON.stringify(process.env['GRAFANA_URL'] || 'http://172.18.198.206:3000/public-dashboards/5192664c23254fd3ba56f3ae1701a1a0?orgId=1&refresh=5s')
   },
 });
