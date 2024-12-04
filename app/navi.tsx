@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import { AppShell, Burger, LoadingOverlay, NavLink } from '@mantine/core';
 import { IconChevronRight, IconFingerprint, IconGauge, IconActivity } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
+import { useLocation } from 'react-router'
 import { useState } from 'react';
 
 const naviLinkHrefs = [
@@ -21,7 +22,7 @@ const naviIndex: {
 export default function Navi() {
   const [opened, { toggle: openedToggle }] = useDisclosure();
   const [loading, { toggle: loadingToggle }] = useDisclosure(false);
-  const activeIndex = naviIndex[window.location.pathname];
+  const activeIndex = naviIndex[useLocation().pathname];
 
   const sideBarMenu = [
     {
