@@ -15,7 +15,12 @@ export default defineConfig({
     proxy: {
       '/api':
         process.env['BACKEND_SUFFIX'] == '' || process.env['BACKEND_SUFFIX'] == undefined
-        ? 'http://127.0.0.1:8000'
+        ? 'http://172.18.198.206:8000'
+        : process.env['BACKEND_SUFFIX']
+      ,
+      '/containers':
+        process.env['BACKEND_SUFFIX'] == '' || process.env['BACKEND_SUFFIX'] == undefined
+        ? 'http://172.18.198.206:8000'
         : process.env['BACKEND_SUFFIX']
     },
     hmr: {
@@ -23,7 +28,6 @@ export default defineConfig({
     }
   },
   define: {
-    'import.meta.env.BACKEND_SUFFIX': JSON.stringify('/api'),
     'import.meta.env.GRAFANA_URL': JSON.stringify(
       process.env['GRAFANA_URL'] == '' || process.env['GRAFANA_URL'] == undefined
       ?  'http://172.18.198.206:3000/public-dashboards/5192664c23254fd3ba56f3ae1701a1a0?orgId=1&refresh=5s'

@@ -4,8 +4,6 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 
-const BACKEND_SUFFIX =  import.meta.env.BACKEND_SUFFIX;
-
 export default function LoginWindow() {
   let navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -20,7 +18,7 @@ export default function LoginWindow() {
     }
 
     try {
-      const response = await fetch(BACKEND_SUFFIX + '/login', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

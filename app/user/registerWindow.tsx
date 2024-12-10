@@ -4,8 +4,6 @@ import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useNavigate } from "react-router";
 
-const BACKEND_SUFFIX =  import.meta.env.BACKEND_SUFFIX;
-
 export default function RegisterWindow() {
   let navigate = useNavigate();
   const [error, setError] = useState('');
@@ -32,7 +30,7 @@ export default function RegisterWindow() {
     }
 
     try {
-      const response = await fetch(BACKEND_SUFFIX + '/register', {
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
