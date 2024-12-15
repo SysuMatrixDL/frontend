@@ -10,7 +10,8 @@ import {
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import '@mantine/core/styles.css';
-
+import '@mantine/notifications/styles.css';
+import { Notifications } from '@mantine/notifications';
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
@@ -41,6 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <MantineProvider>
+          <Notifications />
           {children}
         </MantineProvider>
         <ScrollRestoration />

@@ -5,8 +5,6 @@ import logoLight from "/logo-white.svg";
 import { Button, LoadingOverlay, Modal } from '@mantine/core';
 import { useDisclosure } from "@mantine/hooks";
 
-const BACKEND_SUFFIX = import.meta.env.BACKEND_SUFFIX;
-
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Sysu Matrix DL" },
@@ -25,7 +23,7 @@ export default function Home() {
 
   const tokenLogin = async () => {
     try {
-      const response = await fetch(BACKEND_SUFFIX + '/token_login', {
+      const response = await fetch('/api/token_login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,6 +31,10 @@ export default function Home() {
         },
         credentials: 'include'
       });
+
+      if(response.status == 400){
+        navigate('/login');
+      }
       
       if (!response.ok) {
         if (response.body) {

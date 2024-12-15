@@ -3,7 +3,6 @@ import {
   route,
   index,
   layout,
-  prefix,
 } from "@react-router/dev/routes";
 
 export default [
@@ -13,6 +12,7 @@ export default [
   layout("navi.tsx", [
     route("console", "console/console.tsx"),
     route("market", "market/market.tsx"),
+    route("market/:did", "market/create.tsx"),
     route("community", "community/community.tsx")
   ]),
 ] satisfies RouteConfig;

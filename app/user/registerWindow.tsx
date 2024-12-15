@@ -1,4 +1,4 @@
-import { Button, Group, LoadingOverlay, TextInput } from '@mantine/core';
+import { Button, Group, LoadingOverlay, PasswordInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
@@ -87,7 +87,7 @@ export default function RegisterWindow() {
           key={form.key('username')}
           {...form.getInputProps('username')}
         />
-        <TextInput
+        <PasswordInput
           size="xl"
           withAsterisk
           label="Password"
@@ -95,7 +95,7 @@ export default function RegisterWindow() {
           key={form.key('password')}
           {...form.getInputProps('password')}
         />
-        <TextInput
+        <PasswordInput
           size="xl"
           withAsterisk
           label="Confirm Password"

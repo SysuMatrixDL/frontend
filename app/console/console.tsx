@@ -3,18 +3,16 @@ import { IconPackage, IconSettings, IconBrandDocker, IconChevronRight, IconFinge
 import Containers from './containers';
 import Images from './images';
 import Dashboard from './dashboard';
-import { useDisclosure } from '@mantine/hooks';
-import { useState } from 'react';
 
 export default function Console() {
   const iconStyle = { width: rem(24), height: rem(24) };
 
   return (
-    <Tabs defaultValue="Dashboard">
-      <Tabs.List>
-        <Tabs.Tab value="Dashboard" leftSection={<IconGauge style={iconStyle} stroke={1}/>}>
+    <Tabs defaultValue="Containers">
+      <Tabs.List grow={true}>
+        {/* <Tabs.Tab value="Dashboard" leftSection={<IconGauge style={iconStyle} stroke={1}/>}>
           DashBoard
-        </Tabs.Tab>
+        </Tabs.Tab> */}
         <Tabs.Tab value="Containers" leftSection={<IconBrandDocker style={iconStyle} stroke={1}/>}>
           Containers
         </Tabs.Tab>
@@ -26,9 +24,9 @@ export default function Console() {
         </Tabs.Tab>
       </Tabs.List>
 
-      <Tabs.Panel value="Dashboard">
+      {/* <Tabs.Panel value="Dashboard">
         <Dashboard/>
-      </Tabs.Panel>
+      </Tabs.Panel> */}
 
       <Tabs.Panel value="Containers">
         <Containers/>

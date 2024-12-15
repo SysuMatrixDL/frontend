@@ -1,9 +1,11 @@
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import { AppShell, Burger, LoadingOverlay, NavLink } from '@mantine/core';
-import { IconChevronRight, IconFingerprint, IconGauge, IconActivity } from '@tabler/icons-react';
+import { IconChevronRight, IconFingerprint, IconGauge, IconActivity, IconFlame, IconUsersGroup } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useLocation } from 'react-router'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import UserMenuButton from "./user/userMenuButton";
+import { parseBody } from "./common/parseBody";
 
 const naviLinkHrefs = [
   '/console',
@@ -20,22 +22,61 @@ const naviIndex: {
 }
 
 export default function Navi() {
+  const [click_disable, setClickDisable] = useState<boolean>(true);
+  const [username, setUserName] = useState<string>('?');
   const [opened, { toggle: openedToggle }] = useDisclosure();
-  const [loading, { toggle: loadingToggle }] = useDisclosure(false);
+  const [loading, setLoadingToggle] = useState(true);
   const activeIndex = naviIndex[useLocation().pathname];
+  let navigate = useNavigate();
+
+  const verifyLogin = async () => {
+    try {
+      const response = await fetch('/api/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*'
+        },
+        credentials: 'include'
+      });
+
+      if(response.status != 200){
+        console.error('Not login!');
+        throw new Error('Not login!');
+      }
+
+      let parsedResult : {username: string} = JSON.parse(await parseBody(response));
+      setUserName(parsedResult.username);
+    } catch {
+      setLoadingToggle(true);
+      navigate('/login');
+    }
+  };
+
+  useEffect( () => {
+    verifyLogin();
+    setTimeout(() => {
+      setClickDisable(false);
+      setLoadingToggle(false);
+    }, 500);
+  }, []);
 
   const sideBarMenu = [
     {
       icon: IconGauge,
       label: 'Console',
-      description: 'Item with description'
-    },{
-      icon: IconFingerprint,
-      label: 'Market',
+      description: '用户控制台',
       rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
     },{
-      icon: IconActivity,
-      label: 'Community'
+      icon: IconFlame,
+      label: 'Market',
+      description: '算力市场',
+      rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
+    },{
+      icon: IconUsersGroup,
+      label: 'Community',
+      description: '镜像社区',
+      rightSection: <IconChevronRight size="1rem" stroke={1.5} />,
     },
   ];
 
@@ -43,7 +84,7 @@ export default function Navi() {
     <AppShell
       header={{ height: 70 }}
       navbar={{
-        width: 300,
+        width: 200,
         breakpoint: 'sm',
         collapsed: {
           mobile: opened,
@@ -52,8 +93,9 @@ export default function Navi() {
       }}
       padding="md"
     >
+      <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       <AppShell.Header>
-        <div className="m-3 flex flex-row gap-3 items-center">
+        <div className="flex flex-row gap-3 items-center">
           <Burger
             opened={!opened}
             onClick={openedToggle}
@@ -61,6 +103,11 @@ export default function Navi() {
           <h1 className="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
             <a href="#">
             <img src="/logo-dark.svg" width="300" height="47" alt="logo" className="navbar-brand-image" />
+            </a>
+          </h1>
+          <h1 className="navbar-brand navbar-brand-autodark d-none-navbar-horizontal ps-0 ps-md-3 float-right ml-auto">
+            <a href="#">
+              <UserMenuButton name={username}/>
             </a>
           </h1>
         </div>
@@ -75,14 +122,13 @@ export default function Navi() {
             label={item.label}
             description={item.description}
             rightSection={item.rightSection}
-            leftSection={<item.icon size="1rem" stroke={1.5} />}
-            onClick={loadingToggle}
+            leftSection={<item.icon size="1.5rem" stroke={1.5} />}
+            disabled={click_disable}
           />
         ))}
       </AppShell.Navbar>
 
       <AppShell.Main>
-        <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
         <Outlet/>
       </AppShell.Main>
       

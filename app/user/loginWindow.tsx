@@ -1,4 +1,4 @@
-import { Button, Group, LoadingOverlay, TextInput } from '@mantine/core';
+import { Button, Group, LoadingOverlay, PasswordInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
@@ -75,7 +75,7 @@ export default function LoginWindow() {
           error="wrong password"
           {...form.getInputProps('username')}
         />
-        <TextInput
+        <PasswordInput
           withAsterisk
           size="xl"
           label="Password"

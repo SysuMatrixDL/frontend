@@ -16,12 +16,19 @@ export default defineConfig({
       '/api':
         process.env['BACKEND_SUFFIX'] == '' || process.env['BACKEND_SUFFIX'] == undefined
         ? 'http://172.18.198.206:8000'
-        : process.env['BACKEND_SUFFIX']
-      ,
+        : process.env['BACKEND_SUFFIX'],
       '/containers':
         process.env['BACKEND_SUFFIX'] == '' || process.env['BACKEND_SUFFIX'] == undefined
         ? 'http://172.18.198.206:8000'
-        : process.env['BACKEND_SUFFIX']
+        : process.env['BACKEND_SUFFIX'],
+      '/images':
+        process.env['BACKEND_SUFFIX'] == '' || process.env['BACKEND_SUFFIX'] == undefined
+        ? 'http://172.18.198.206:8000'
+        : process.env['BACKEND_SUFFIX'],
+        '/devices':
+          process.env['BACKEND_SUFFIX'] == '' || process.env['BACKEND_SUFFIX'] == undefined
+          ? 'http://172.18.198.206:8000'
+          : process.env['BACKEND_SUFFIX']
     },
     hmr: {
       overlay: false
