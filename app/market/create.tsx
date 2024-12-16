@@ -156,6 +156,7 @@ export default function Create({params}: Route.ComponentProps) {
     setTran(true);
     setTimeout(() => {
       setStep(6);
+      setCreating(false);
     }, 400);
   }
 
@@ -348,7 +349,7 @@ export default function Create({params}: Route.ComponentProps) {
             <Grid.Col span={12} h={100}>
               <div className="flex flex-row gap-2 m-2">
                 <Button
-                  disabled={step == 0 || step == 6}
+                  disabled={step == 0 || step == 6 || creating}
                   variant="light"
                   fullWidth
                   onClick={() => {
@@ -365,7 +366,8 @@ export default function Create({params}: Route.ComponentProps) {
                     (!name && step == 0) ||
                     (cpu == 0 && step == 2) ||
                     (mem < 1024 && step == 3) ||
-                    (!image && step == 4)
+                    (!image && step == 4) ||
+                    creating
                   }
                   variant="light"
                   fullWidth
