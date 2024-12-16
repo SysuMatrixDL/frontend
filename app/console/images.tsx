@@ -1,4 +1,4 @@
-import { Text, Table, Button, Drawer, Image, Notification, rem } from '@mantine/core';
+import { Loader, Text, Table, Button, Drawer, Image } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { parseBody } from '~/common/parseBody';
@@ -33,6 +33,7 @@ enum ImageOp {
 }
 
 export default function Images () {
+  const [fetching, setFetching] = useState(true);
   const [data, setData] = useState<{d: DeviceProp, i: ImageProp}[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [operating, setOperating] = useState(false);
@@ -166,6 +167,7 @@ export default function Images () {
   }
 
   const refreshTable = async () => {
+    setFetching(true);
     const images = await getImageList();
     var data: {d: DeviceProp, i: ImageProp}[] = await Promise.all(images.map(async (iid) => {
       const image_prop = await getImageProperty(iid);
@@ -173,15 +175,15 @@ export default function Images () {
       const device_prop = await getDeviceProperty(image_prop.did);
       return {d: device_prop, i: image_prop};
     }));
-
     setData(data);
+    setFetching(false);
   }
 
   useEffect(() => {
     refreshTable();
   }, []);
 
-  return (<>
+  return (fetching ? <div className='flex h-full items-center justify-center'><Loader color="rgba(255, 31, 31, 0.6)" size="xl" /></div> : <>
     <Table data={{
       caption: data.length > 0 ? '' : '您还没有创建任何镜像',
       head: [

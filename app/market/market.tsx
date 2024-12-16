@@ -1,4 +1,4 @@
-import { Text, Table, TableData, SemiCircleProgress, Spoiler, List, ThemeIcon, rem, Button } from '@mantine/core';
+import { Text, Table, Loader, SemiCircleProgress, Spoiler, List, ThemeIcon, rem, Button } from '@mantine/core';
 import { IconCircleCheck, IconLock } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -28,6 +28,7 @@ type DeviceProp = {
 }
 
 export default function Market () {
+  const [fetching, setFetching] = useState(true);
   const [devices_data, setDevicesData] = useState<DeviceProp[]>([]);
   let navigate = useNavigate();
 
@@ -120,6 +121,7 @@ export default function Market () {
   }
 
   const refreshTable = async () => {
+    setFetching(true);
     const devices = await getDeviceList();
     var data: DeviceProp[] = await Promise.all(devices.map(async (did) => {
       const device_prop = await getDeviceProperty(did);
@@ -127,15 +129,16 @@ export default function Market () {
       return device_prop;
     }));
     setDevicesData(data);
+    setFetching(false);
   }
 
   useEffect(() => {
     refreshTable();
   }, []);
 
-  return (
+  return ( fetching ? <div className='flex h-full items-center justify-center'><Loader color="rgba(255, 31, 31, 0.6)" size="xl" /></div> :
     <Table data={{
-      caption: devices_data.length > 0 ? '' : '您还没有创建任何镜像',
+      caption: devices_data.length > 0 ? '' : '暂时没有任何设备',
       head: [
         <p className='text-center'>设备ID</p>,
         <p className='text-center'>宿主机详情</p>,
@@ -219,10 +222,10 @@ export default function Market () {
             >
               {device_data.images.map((image_data)=>{return(
                 <List.Item>
-                  <div className='flex flex-row space-x-1'>
-                    <Text size='sm' c='rgba(0, 150, 150, 0.8)'>{image_data.name}</Text>
-                    <Text size='sm' c='rgba(0, 0, 0, 0.5)'>{`(ID:${image_data.iid})`}</Text>
-                    <Text size='sm' c='rgba(0, 0, 200, 0.5)'>{image_data.User != 'public' && `${image_data.User}`}</Text>
+                  <div className='flex flex-row space-x-1 whitespace-nowrap'>
+                    <Text size='sm' span={true} c='rgba(0, 150, 150, 0.8)'>{image_data.name}</Text>
+                    <Text size='sm' span={true} c='rgba(0, 0, 0, 0.5)'>{`(ID:${image_data.iid})`}</Text>
+                    <Text size='sm' span={true} c='rgba(0, 0, 200, 0.5)'>{image_data.User != 'public' && `${image_data.User}`}</Text>
                     {!image_data.public && <IconLock color='rgba(0, 0, 200, 0.5)' style={{ width: rem(12), height: rem(12) }} /> }
                   </div>
                 </List.Item>

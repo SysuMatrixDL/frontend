@@ -120,8 +120,8 @@ export default function RegisterWindow() {
         /> */}
 
         <Group justify="flex-end" mt="md">
-          <Button type="submit" fullWidth>Register</Button>
-          <Button fullWidth onClick={() => {return navigate('/login')}}>Already have an account? Click to login</Button>
+          <Button variant="light" type="submit" fullWidth>Register</Button>
+          <Button variant="light" fullWidth onClick={() => {return navigate('/login')}}>Already have an account? Click to login</Button>
         </Group>
       </form>
       {error && <div className='text-red-600 text-15 text-center mt-5'>{error}</div>}

@@ -49,7 +49,7 @@ export default function Register() {
   }, []);
   
   return (
-    <div className="min-h-screen bg-blue-100 flex">
+    <div className="min-h-screen flex">
       {/* 左侧圆弧展示区 */}
       <div className="w-1/2 relative overflow-hidden">
       <div className="absolute inset-0 bg-blue-300" style={{ clipPath: clipPathValues.clip2, overflow: 'hidden'}}/>

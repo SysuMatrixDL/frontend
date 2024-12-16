@@ -93,8 +93,8 @@ export default function LoginWindow() {
         /> */}
 
         <Group justify="flex-end" mt="md">
-          <Button type="submit" fullWidth>Login</Button>
-          <Button fullWidth onClick={() => {return navigate('/register')}}>Not having an account? Click to register</Button>
+          <Button variant="light" type="submit" fullWidth>Login</Button>
+          <Button variant="light" fullWidth onClick={() => {return navigate('/register')}}>Not having an account? Click to register</Button>
         </Group>
       </form>
       {error && <div className='text-red-600 text-15 text-center mt-5'>{error}</div>}

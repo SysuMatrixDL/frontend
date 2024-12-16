@@ -1,9 +1,9 @@
 "use client"
 
-import { Text, Table, CopyButton, Button, NavLink, Image, Drawer, Modal, Input, CloseButton, TextInput, SegmentedControl, Center, rem, PasswordInput, Container } from '@mantine/core';
+import { Loader, Text, Table, CopyButton, Button, NavLink, Image, Drawer, Modal, Input, CloseButton, TextInput, SegmentedControl, Center, rem, PasswordInput, Container } from '@mantine/core';
 import { IconActivity, IconCopy, IconCheck, IconBrandPython, IconChartHistogram, IconEye, IconLock  } from '@tabler/icons-react';
 import { InlineCodeHighlight } from '@mantine/code-highlight';
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { parseBody } from '../common/parseBody';
 import { notifications } from '@mantine/notifications';
@@ -35,6 +35,7 @@ enum ContainerStatus {
 }
 
 export default function Containers () {
+  const [fetching, setFetching] = useState(true);
   const [containers_data, setContainersData] = useState<ContainerData[]>([]);
   const [containers_status, setContainersStatus] = useState<{cid: number, status: ContainerStatus}[]>([]);
   const [drawer_opened, { open: drawer_open, close: drawer_close }] = useDisclosure(false);
@@ -249,6 +250,7 @@ export default function Containers () {
   }
 
   const refreshTable = async () => {
+    setFetching(true);
     const containers = await getContainerList();
     var containers_status: {cid: number, status: ContainerStatus}[] = await Promise.all(containers.map(async (cid, idx) => {
       const status = await getContainerStatus(cid);
@@ -287,6 +289,7 @@ export default function Containers () {
       return container_data;
     }));
     setContainersData(data);
+    setFetching(false);
   }
 
   useEffect(() => {
@@ -295,7 +298,7 @@ export default function Containers () {
 
   const form = useForm({mode: 'uncontrolled'});
 
-  return (<>
+  return (fetching ? <div className='flex h-full items-center justify-center'><Loader color="rgba(255, 31, 31, 0.6)" size="xl" /></div> : <>
     <Table data={{
       caption: containers_data.length > 0 ? '' : '您还没有创建任何容器',
       head: [
@@ -477,7 +480,7 @@ export default function Containers () {
           key={form.key('name')}
           placeholder="your container name"
           value={create_img_name}
-          onChange={(event) => setCreateImgName(event.currentTarget.value)}
+          onChange={(event: { currentTarget: { value: SetStateAction<string>; }; }) => setCreateImgName(event.currentTarget.value)}
           rightSectionPointerEvents="all"
           mt="md"
           rightSection={
@@ -494,7 +497,7 @@ export default function Containers () {
         <SegmentedControl
           fullWidth
           name='public'
-          onChange={(v) => {setCreateImgPublic(v=='true'?true:false)}}
+          onChange={(v: string) => {setCreateImgPublic(v=='true'?true:false)}}
           data={[
           {
             value: 'true',

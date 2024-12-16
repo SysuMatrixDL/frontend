@@ -1,8 +1,7 @@
-import { Tabs, rem, AppShell, Burger, NavLink } from '@mantine/core';
-import { IconPackage, IconSettings, IconBrandDocker, IconChevronRight, IconFingerprint, IconGauge, IconActivity } from '@tabler/icons-react';
+import { Tabs, rem } from '@mantine/core';
+import { IconPackage, IconSettings, IconBrandDocker } from '@tabler/icons-react';
 import Containers from './containers';
 import Images from './images';
-import Dashboard from './dashboard';
 
 export default function Console() {
   const iconStyle = { width: rem(24), height: rem(24) };

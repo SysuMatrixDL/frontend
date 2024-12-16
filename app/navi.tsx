@@ -25,7 +25,7 @@ export default function Navi() {
   const [click_disable, setClickDisable] = useState<boolean>(true);
   const [username, setUserName] = useState<string>('?');
   const [opened, { toggle: openedToggle }] = useDisclosure();
-  const [loading, setLoadingToggle] = useState(true);
+  // const [loading, setLoadingToggle] = useState(true);
   const activeIndex = naviIndex[useLocation().pathname];
   let navigate = useNavigate();
 
@@ -48,17 +48,17 @@ export default function Navi() {
       let parsedResult : {username: string} = JSON.parse(await parseBody(response));
       setUserName(parsedResult.username);
     } catch {
-      setLoadingToggle(true);
+      // setLoadingToggle(true);
       navigate('/login');
     }
   };
 
   useEffect( () => {
     verifyLogin();
-    setTimeout(() => {
+    // setTimeout(() => {
       setClickDisable(false);
-      setLoadingToggle(false);
-    }, 500);
+    // setLoadingToggle(false);
+    // }, 500);
   }, []);
 
   const sideBarMenu = [
@@ -93,7 +93,7 @@ export default function Navi() {
       }}
       padding="md"
     >
-      <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+      {/* <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} /> */}
       <AppShell.Header>
         <div className="flex flex-row gap-3 items-center">
           <Burger

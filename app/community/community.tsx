@@ -1,8 +1,9 @@
-import { Text, Table, TableData, SemiCircleProgress, Avatar } from '@mantine/core';
+import { Text, Table, Loader, Avatar } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { parseBody } from '~/common/parseBody';
 
 type ImageProp = {
+  iid: string
   did: string,
   name: string,
   public: boolean,
@@ -25,7 +26,8 @@ type DeviceProp = {
 }
 
 export default function Community () {
-  const [table_data, setTableData] = useState<TableData>({});
+  const [fetching, setFetching] = useState(true);
+  const [data, setData] = useState<{i: ImageProp, d: DeviceProp}[]>([]);
 
   const getImageList = async () => {
     let ret : string[] = [];
@@ -55,6 +57,7 @@ export default function Community () {
 
   const getImageProperty = async (iid: string) => {
     let property : ImageProp = {
+      iid: "Error",
       did: "Error",
       name: "Error",
       public: false,
@@ -119,100 +122,85 @@ export default function Community () {
   }
 
   const refreshTable = async () => {
+    setFetching(true);
     const images = await getImageList();
-    var _body: JSX.Element[][] = await Promise.all(images.map(async (iid) => {
+    var _data: {i: ImageProp, d: DeviceProp}[] = await Promise.all(images.map(async (iid) => {
       const image_prop = await getImageProperty(iid);
+      image_prop.iid = iid;
       const device_prop = await getDeviceProperty(image_prop.did);
-
-      // NOTE: 目前默认每个worker节点只有一种GPU
-
-      const ratioColor = (value: number) => {
-        const red = Math.round(255 * (1 - value));
-        const green = Math.round(255 * value);
-        const blue = 0; 
-        return `rgba(${red}, ${green}, ${blue}, 0.5)`;
-      }
-
-      const host_data = [{
-          title: '设备ID',
-          label: image_prop.did
-        },{
-          title: 'IP',
-          label: device_prop.ip
-        },{
-          title: 'CPU',
-          label: device_prop.cpu_name
-        },{
-          title: 'GPU',
-          label: device_prop.gpus.length > 0 ? device_prop.gpus[0].gpu_type : '无GPU'
-      }]
-
-      const chart_data = [{
-        ratio: 1 - device_prop.gpu_used.length / device_prop.gpus.length,
-        label: `GPU: ${device_prop.gpus.length - device_prop.gpu_used.length}/${device_prop.gpus.length}`
-      },{
-        ratio: 1 - device_prop.used_cpu / device_prop.total_cpu,
-        label: `CPU: ${device_prop.total_cpu - device_prop.used_cpu}/${device_prop.total_cpu}`
-      },{
-        ratio: 1- device_prop.used_memory / device_prop.total_memory,
-        label: `内存: ${(device_prop.total_memory - device_prop.used_memory) / 1024}GiB/${device_prop.total_memory / 1024}GiB`
-      }];
-
-      return [
-        <div className='text-center'>
-          <Text fw={700}>
-            {image_prop.name}
-          </Text>
-          <Text size="sm" c="gray.6">
-            ID: {iid}
-          </Text>
-        </div>,
-        <div className='text-center'>
-          <Text fw={700} c="blue.6">
-            {(image_prop.size / 1024 ** 2) > 1024 ? (image_prop.size / 1024 ** 3).toFixed(2) + 'GiB' : (image_prop.size / 1024 ** 2).toFixed(2) + 'MiB'}
-          </Text>
-        </div>,
-        <div className=''>
-          <Table variant="vertical" layout="auto">
-            <Table.Tbody>
-              {host_data.map((value => { return (
-                <Table.Tr>
-                 <Table.Th w={85}>{value.title}</Table.Th>
-                 <Table.Td>{value.label}</Table.Td>
-                </Table.Tr>
-              )}))}
-            </Table.Tbody>
-          </Table>
-        </div>,
-        <div className='text-center'>
-            {image_prop.user == 'public' ?
-              <Text fw={700} c="teal.6">公共镜像</Text>:
-              <div className='flex justify-center flex-col items-center'>
-                <Avatar key={image_prop.user} name={image_prop.user} color="initials" allowedInitialsColors={['blue', 'red']} radius="xl"/>
-                <Text fw={500} c="gray.6">{image_prop.user}</Text>
-              </div>
-            }
-        </div>
-      ];
+      return {i: image_prop, d: device_prop};
     }));
-
-    setTableData({
-      caption: _body.length > 0 ? '' : '您还没有创建任何镜像',
-      head: [
-        <p className='text-center'>镜像ID/名称</p>,
-        <p className='text-center'>大小</p>,
-        <p className='text-center'>宿主机详情</p>,
-        <p className='text-center'>创建者</p>
-      ],
-      body:  _body
-    });
+    setData(_data);
+    setFetching(false);
   }
 
   useEffect(() => {
     refreshTable();
   }, []);
 
+  let _body = data.map(({i, d}) => {
+    // NOTE: 目前默认每个worker节点只有一种GPU
+    const host_data = [{
+      title: '设备ID',
+      label: i.did
+    },{
+      title: 'IP',
+      label: d.ip
+    },{
+      title: 'CPU',
+      label: d.cpu_name
+    },{
+      title: 'GPU',
+      label: d.gpus.length > 0 ? d.gpus[0].gpu_type : '无GPU'
+    }]
+
+    return [
+      <div className='text-center'>
+        <Text fw={700}>
+          {i.name}
+        </Text>
+        <Text size="sm" c="gray.6">
+          ID: {i.iid}
+        </Text>
+      </div>,
+      <div className='text-center'>
+        <Text fw={700} c="blue.6">
+          {(i.size / 1024 ** 2) > 1024 ? (i.size / 1024 ** 3).toFixed(2) + 'GiB' : (i.size / 1024 ** 2).toFixed(2) + 'MiB'}
+        </Text>
+      </div>,
+      <div className=''>
+        <Table variant="vertical" layout="auto">
+          <Table.Tbody>
+            {host_data.map((value => { return (
+              <Table.Tr>
+              <Table.Th w={85}>{value.title}</Table.Th>
+              <Table.Td>{value.label}</Table.Td>
+              </Table.Tr>
+            )}))}
+          </Table.Tbody>
+        </Table>
+      </div>,
+      <div className='text-center'>
+          {i.user == 'public' ?
+            <Text fw={700} c="teal.6">公共镜像</Text>:
+            <div className='flex justify-center flex-col items-center'>
+              <Avatar key={i.user} name={i.user} color="initials" allowedInitialsColors={['blue', 'red']} radius="xl"/>
+              <Text fw={500} c="gray.6">{i.user}</Text>
+            </div>
+          }
+      </div>
+    ];
+  });
+
   return (
-    <Table data={table_data} />
+    fetching ? <div className='flex h-full items-center justify-center'><Loader color="rgba(255, 31, 31, 0.6)" size="xl" /></div> : <Table data={{
+      head: [
+        <p className='text-center'>镜像ID/名称</p>,
+        <p className='text-center'>大小</p>,
+        <p className='text-center'>宿主机详情</p>,
+        <p className='text-center'>创建者</p>
+      ],
+      body: _body
+    }} />
   );
 }
